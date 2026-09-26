@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>G-REDscript Profiler — Install & Capture Instructions</title>
+<style>
+:root{--bg:#070c10;--panel:#0c151c;--panel2:#101d26;--line:#29424f;--cyan:#20f2ff;--magenta:#ff2bd6;--green:#39ff88;--yellow:#ffd84b;--red:#ff5368;--text:#eef7fb;--muted:#9db4c1}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:linear-gradient(180deg,#05090c,#081016);color:var(--text);font-family:Segoe UI,Arial,sans-serif;line-height:1.55}
+.wrap{max-width:1080px;margin:auto;padding:34px 24px 70px}.hero,.step{border:1px solid var(--line);background:var(--panel);border-radius:14px;box-shadow:0 14px 38px rgba(0,0,0,.3)}
+.hero{padding:28px 30px;background:linear-gradient(135deg,#09151c,#0b1017 60%,#160b18)}h1{margin:0;color:var(--cyan);font-size:34px}.subtitle{color:var(--muted);margin:5px 0 0;font-size:17px}
+.progress{margin-top:20px;padding:12px 14px;border:1px solid #21404c;background:#081117;border-radius:9px;font-weight:700;text-align:center;letter-spacing:.7px}.progress b{color:var(--cyan)}
+.recommended{margin-top:24px;display:grid;grid-template-columns:1fr 1fr;gap:16px}.rec{padding:18px;background:#0c151c;border:1px solid var(--line);border-radius:10px}.rec h3{margin:0 0 6px;color:var(--yellow)}
+a{color:var(--cyan);font-weight:700}.buttonlink{display:inline-block;margin-top:8px;padding:9px 13px;border:1px solid var(--cyan);border-radius:6px;text-decoration:none;background:#07151b}
+.important{margin:18px 0 0;padding:14px 16px;border-left:5px solid var(--red);background:#211011;border-radius:6px;color:#fff}.note{margin-top:14px;padding:12px 14px;border:1px solid var(--line);background:#0a141b;border-radius:7px;color:var(--muted)}
+.step{margin-top:34px;padding:24px}.stephead{display:flex;align-items:center;gap:13px;margin-bottom:16px}.badge{min-width:42px;height:42px;border-radius:50%;background:var(--red);color:white;display:flex;align-items:center;justify-content:center;font-size:21px;font-weight:800;box-shadow:0 0 16px rgba(255,82,104,.28)}.step h2{margin:0;color:var(--cyan);font-size:25px}
+.shot{display:block;width:100%;height:auto;border:1px solid #4a5961;border-radius:8px;background:#000;box-shadow:0 12px 28px rgba(0,0,0,.34)}
+.instructions{margin-top:18px;padding:16px 18px;background:var(--panel2);border-left:4px solid var(--cyan);border-radius:7px}.instructions ol,.instructions ul{margin:6px 0 0;padding-left:23px}.instructions li{margin:7px 0}
+.success{margin-top:14px;padding:13px 15px;border:1px solid #1d7141;background:#0c2117;border-radius:7px;color:#adffd0}
+code{background:#050a0e;border:1px solid #21333d;border-radius:4px;padding:2px 5px;color:#e6fbff}.footer{margin-top:32px;color:var(--muted);text-align:center;font-size:13px}
+@media(max-width:760px){.recommended{grid-template-columns:1fr}.wrap{padding:18px 10px 40px}.hero,.step{padding:18px}h1{font-size:28px}}
+</style></head><body><div class="wrap">
+<section class="hero">
+<h1>G-REDscript Profiler</h1><p class="subtitle">v1.0.0 — Installation, synchronized capture, collection and restore guide</p>
+<div class="progress"><b>KEYBIND</b> → <b>SETUP</b> → <b>INSTALL</b> → <b>CAPTURE</b> → <b>COLLECT</b> → <b>RESTORE</b></div>
+<div class="recommended">
+<div class="rec"><h3>RED4ext — required</h3><p>G-REDscript Profiler is a native RED4ext plugin. Cyberpunk 2077 and a working RED4ext installation are required before the profiler can be installed.</p></div>
+<div class="rec"><h3>Frame-time profiler — recommended</h3><p>G-REDscript Profiler works standalone, but pairing the REDscript capture with frame-time data lets the report compare script activity with actual rendered-frame behavior. This build was designed and tested alongside <b>CapFrameX 1.9.1.2 Beta</b>.</p><a class="buttonlink" href="https://github.com/CXWorld/CapFrameX/releases" target="_blank">CapFrameX releases on GitHub</a></div>
+</div>
+<div class="important"><b>Capture key:</b> G-REDscript Profiler uses <b>F11</b> for START and STOP + EXPORT. If you pair it with a frame-time tool, configure that tool to use the same key so both captures start and stop together.</div>
+</section>
+
+<section class="step"><div class="stephead"><div class="badge">0</div><h2>MATCH THE FRAME-TIME CAPTURE KEY</h2></div>
+<p>G-REDscript Profiler itself uses <b>F11</b>. There is no separate REDscript keybind page to configure. Only the optional frame-time tool needs to be matched to F11.</p>
+<img class="shot" src="@@IMG_CAPFRAMEX@@" alt="CapFrameX F11 capture settings">
+<div class="instructions"><ol><li>Open CapFrameX and go to the <b>CAPTURE</b> tab.</li><li>Under <b>Capture settings</b>, set <b>Capture hotkey</b> to <b>F11</b>.</li><li>Leave capture time at <b>0</b> if you want F11 to control START and STOP manually.</li><li>If you use another frame-time tool, configure its capture key to F11 instead.</li></ol></div></section>
+
+<section class="step"><div class="stephead"><div class="badge">1</div><h2>SETUP</h2></div>
+<img class="shot" src="@@IMG_SETUP@@" alt="G-REDscript Profiler setup page">
+<div class="instructions"><ol><li>Extract the release ZIP to a normal writable folder and run <code>G-REDscript-Profiler.exe</code> from the profiler folder.</li><li>Select the <b>Cyberpunk 2077</b> game root. The profiler checks that the game and RED4ext are present.</li><li>G-REDscript Profiler works standalone. If you want frame-time correlation, keep <b>Run with a frame-time capture tool</b> enabled.</li><li>Select the frame-time profiler executable and its capture/results folder.</li><li>Confirm the displayed key information shows G-REDscript Profiler on F11 and, when linked, the frame-time tool on the same key.</li><li>Click <b>CONTINUE →</b>.</li></ol></div></section>
+
+<section class="step"><div class="stephead"><div class="badge">2</div><h2>INSTALL THE PROFILER</h2></div>
+<img class="shot" src="@@IMG_INSTALL@@" alt="G-REDscript Profiler install page">
+<div class="instructions"><ol><li>The status page should show the game and RED4ext as installed and report that the REDscript profiler is ready to deploy.</li><li>Enter a useful <b>Capture title</b>, for example <code>WORLD</code>, <code>CITY_DRIVE</code> or <code>COMBAT</code>.</li><li>Click <b>INSTALL PROFILER</b>. G-REDscript Profiler installs its native DLL under <code>red4ext\plugins</code> and creates its managed data/results folder.</li><li>Do not begin the benchmark until the page reports <b>PROFILER IS READY!</b>.</li></ol></div></section>
+
+<section class="step"><div class="stephead"><div class="badge">3</div><h2>READY — START THE TEST ENVIRONMENT</h2></div>
+<img class="shot" src="@@IMG_READY@@" alt="G-REDscript Profiler ready page">
+<div class="instructions"><ol><li>If you are using a frame-time companion, start it first with <b>START FRAME-TIME TOOL</b>.</li><li>Then launch Cyberpunk with <b>START CYBERPUNK</b>.</li><li>For repeatable results, close unnecessary background applications before the capture.</li><li>Load the save and reach the exact location/workload you want to measure.</li><li>Press <b>F11 once</b> to START. G-REDscript Profiler gives one high beep.</li><li>Run the workload, then press <b>F11 again</b> to STOP + EXPORT. The profiler gives two lower beeps.</li><li>If Cyberpunk closes while a capture is active, shutdown is treated as an implicit STOP and the profiler attempts to export the useful capture collected so far.</li></ol></div></section>
+
+<section class="step"><div class="stephead"><div class="badge">4</div><h2>CONFIRM A LIVE CAPTURE</h2></div>
+<img class="shot" src="@@IMG_CAPTURED@@" alt="Completed live G-REDscript capture">
+<div class="instructions"><p>After STOP + EXPORT, return to G-REDscript Profiler. The final v1.0.0 UI reports <b>Live Captures: 1</b> when one completed game-side capture is ready for collection.</p><p>The number counts completed <code>Capture_*</code> folders, not ordinary text files such as <code>CaptureTitle.txt</code>.</p></div>
+<div class="note">The screenshot was taken immediately before the final wording cleanup and therefore says <b>Live Files</b>. The released build uses the clearer label <b>Live Captures</b>; the underlying count is unchanged.</div></section>
+
+<section class="step"><div class="stephead"><div class="badge">5</div><h2>COLLECT RESULTS / CLEAR LIVE</h2></div>
+<img class="shot" src="@@IMG_COLLECTED@@" alt="G-REDscript Profiler after result collection">
+<div class="instructions"><ol><li>Close Cyberpunk 2077 before collection.</li><li>Click <b>COLLECT RESULTS / CLEAR LIVE</b>.</li><li>The completed live capture is copied and verified into the portable profiler's <code>RESULTS</code> folder, normalized to the <code>RED-YYYYMMDD-HHMMSS_TITLE</code> archive layout, and then removed from the live game folder.</li><li>The collected capture contains <code>GRSP_Report.html</code> and <code>GRSP_Summary.json</code> at the archive root, with detailed runtime/developer/metadata files under <code>Data</code>.</li><li>If a recognized frame-time capture is available, G-REDscript Profiler also copies it into the result and adds correlation data. External frame-time source files are never moved or deleted.</li></ol></div>
+<div class="note">In the final v1.0.0 build the status label shown here is <b>Live Captures: 0</b> after successful collection.</div></section>
+
+<section class="step"><div class="stephead"><div class="badge">6</div><h2>RESTORE ORIGINAL STATE</h2></div>
+<img class="shot" src="@@IMG_RESTORED@@" alt="Successful G-REDscript Profiler restore">
+<div class="instructions"><ol><li>When you are finished profiling, make sure Cyberpunk 2077 is closed.</li><li>Click <b>RESTORE ORIGINAL STATE</b> and confirm the restore.</li><li>G-REDscript Profiler removes the manager-owned profiler DLL and managed data. Any remaining live profiler output is archived first when possible.</li></ol><div class="success"><b>✓ RESTORE SUCCESSFUL — files returned to their original state.</b></div><p>Once the green confirmation appears, the profiling session is complete. Your collected results remain in the portable profiler's <code>RESULTS</code> folder.</p></div></section>
+
+<div class="footer">G-REDscript Profiler v1.0.0 — Quick installation and capture guide</div>
+</div></body></html>

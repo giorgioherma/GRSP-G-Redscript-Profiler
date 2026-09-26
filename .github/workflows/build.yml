@@ -424,6 +424,22 @@ jobs:
 
           Write-Host 'Launcher/package-root/install/restore/report smoke test passed.'
 
+      - name: Generate illustrated install guide
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          & .\tools\Build-InstallInstructions.ps1
+          if (!(Test-Path -LiteralPath 'Install_Instructions.html' -PathType Leaf)) {
+            throw 'Generated Install_Instructions.html is missing.'
+          }
+          $guide = Get-Content -LiteralPath 'Install_Instructions.html' -Raw
+          if ($guide -match '@@IMG_[A-Z]+@@') {
+            throw 'Generated install guide still contains unresolved image placeholders.'
+          }
+          if ($guide -notmatch 'G-REDscript Profiler' -or $guide -notmatch 'Live Captures') {
+            throw 'Generated install guide failed content validation.'
+          }
+
       - name: Stage portable release ZIP
         shell: pwsh
         run: |
@@ -438,12 +454,18 @@ jobs:
           New-Item -ItemType Directory -Force $productRoot | Out-Null
           Copy-Item publish\* $productRoot -Recurse -Force
 
+          $instructions = Join-Path $portableRoot 'Install_Instructions.html'
+          Copy-Item Install_Instructions.html $instructions -Force
+          if (!(Test-Path -LiteralPath $instructions -PathType Leaf)) {
+            throw 'Install_Instructions.html was not staged beside the profiler folder.'
+          }
+
           $asset = "G-REDscript-Profiler-v$env:PRODUCT_VERSION.zip"
           if (Test-Path $asset) {
             Remove-Item $asset -Force
           }
 
-          Compress-Archive -Path $productRoot -DestinationPath $asset -CompressionLevel Optimal
+          Compress-Archive -Path $productRoot,$instructions -DestinationPath $asset -CompressionLevel Optimal
           $hash = (Get-FileHash -LiteralPath $asset -Algorithm SHA256).Hash.ToLowerInvariant()
           "$hash  $asset" | Set-Content -Encoding ASCII "$asset.sha256.txt"
 
@@ -459,3 +481,65 @@ jobs:
           name: G-REDscript-Profiler-v${{ steps.product_version.outputs.version }}
           path: portable/
           if-no-files-found: error
+
+      - name: Publish canonical GitHub release
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+
+          $tag = "v$env:PRODUCT_VERSION"
+          $repo = $env:GITHUB_REPOSITORY
+          $sha = $env:GITHUB_SHA
+          $releaseNotes = Join-Path $env:RUNNER_TEMP "gred-release-notes-$env:PRODUCT_VERSION.md"
+
+          $mainSha = (& gh api "repos/$repo/commits/main" --jq .sha).Trim()
+          if ($mainSha -ne $sha) {
+            Write-Host "Skipping stale release publish for $sha; current main is $mainSha."
+            exit 0
+          }
+
+          $tagExists = $false
+          $tagSha = ''
+          try {
+            $tagSha = (& gh api "repos/$repo/git/ref/tags/$tag" --jq .object.sha).Trim()
+            $tagExists = $true
+          }
+          catch {
+            $tagExists = $false
+          }
+
+          if ($tagExists) {
+            if ($tagSha -ne $sha) {
+              Write-Host "Moving $tag from $tagSha to $sha."
+              gh api --method PATCH "repos/$repo/git/refs/tags/$tag" -f sha="$sha" -F force=true | Out-Null
+            }
+          }
+          else {
+            gh api --method POST "repos/$repo/git/refs" -f ref="refs/tags/$tag" -f sha="$sha" | Out-Null
+          }
+
+          $notes = (Get-Content -LiteralPath PUBLIC_RELEASE_NOTES.md -Raw).TrimEnd()
+          $notes += [Environment]::NewLine + [Environment]::NewLine + '## Canonical release SHA-256' + [Environment]::NewLine + [Environment]::NewLine
+          $notes += $env:PUBLIC_SHA256 + '  ' + $env:PUBLIC_ASSET + [Environment]::NewLine
+          Set-Content -LiteralPath $releaseNotes -Value $notes -Encoding utf8
+
+          $releaseExists = $false
+          try {
+            gh release view $tag --repo $repo | Out-Null
+            $releaseExists = $true
+          }
+          catch {
+            $releaseExists = $false
+          }
+
+          if ($releaseExists) {
+            gh release edit $tag --repo $repo --title "G-REDscript Profiler v$env:PRODUCT_VERSION" --notes-file $releaseNotes --target $sha
+          }
+          else {
+            gh release create $tag --repo $repo --title "G-REDscript Profiler v$env:PRODUCT_VERSION" --notes-file $releaseNotes --target $sha
+          }
+
+          gh release upload $tag $env:PUBLIC_ASSET "$env:PUBLIC_ASSET.sha256.txt" --repo $repo --clobber

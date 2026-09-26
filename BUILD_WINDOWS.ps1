@@ -4,7 +4,8 @@ if (-not (Get-Command cargo -ErrorAction SilentlyContinue)) {
     throw 'Rust/Cargo was not found. Install Rust and the Windows MSVC build toolchain, or use GitHub Actions.'
 }
 
-cargo build --release
+cargo generate-lockfile
+cargo build --release --locked
 
 $built = 'target\release\g_redscript_profiler.dll'
 $public = 'target\release\G-REDscript-Profiler.dll'

@@ -491,6 +491,15 @@ jobs:
             throw 'Generated install guide failed content validation.'
           }
 
+      - name: Generate illustrated install guide
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          ./tools/Build-InstallInstructions.ps1
+          if (!(Test-Path -LiteralPath 'Install_Instructions.html' -PathType Leaf)) {
+            throw 'Install_Instructions.html was not generated.'
+          }
+
       - name: Stage portable release ZIP
         shell: pwsh
         run: |

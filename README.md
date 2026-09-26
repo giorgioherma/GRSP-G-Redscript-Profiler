@@ -34,6 +34,10 @@ G-REDscript-Profiler-v1.0.0.zip
    ├─ RESULTS\
    └─ docs\
       ├─ README.md
+      ├─ BUILDING.md
+      ├─ SECURITY.md
+      ├─ BUILD_PROVENANCE.txt
+      ├─ Cargo.lock
       ├─ CHANGELOG.md
       ├─ RELEASE_NOTES.md
       ├─ FRAMEWORK_AUTHOR_GUIDE.md
@@ -298,8 +302,13 @@ dropped_hot_paths = 0 or understood
 Native DLL:
 
 ```powershell
-.\BUILD_WINDOWS.ps1
+cargo generate-lockfile
+cargo build --release --locked
 ```
+
+The canonical GitHub release is built by GitHub Actions directly from the public Rust source. The exact generated dependency lock and build provenance are shipped as `docs\Cargo.lock` and `docs\BUILD_PROVENANCE.txt`.
+
+For the full release-build path, see [BUILDING.md](BUILDING.md). For install/restore behavior and binary provenance, see [SECURITY.md](SECURITY.md).
 
 Standalone manager app:
 

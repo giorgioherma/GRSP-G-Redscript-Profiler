@@ -52,4 +52,4 @@ G-REDscript-Profiler-v1.0.0.zip
       └─ THIRD_PARTY_NOTICE.txt
 ```
 
-Extract to a writable folder, open `Install_Instructions.html` if you want the illustrated guide, then run `G-REDscript-Profiler\\G-REDscript-Profiler.exe`.
+Extract to a writable folder, open `Install_Instructions.html` if you want the illustrated guide, then run `G-REDscript-Profiler\G-REDscript-Profiler.exe`.

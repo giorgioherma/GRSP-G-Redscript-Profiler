@@ -46,7 +46,7 @@ G-REDscript-Profiler-v1.0.0.zip
       └─ THIRD_PARTY_NOTICE.txt
 ```
 
-Extract the ZIP to a normal writable folder. Open `Install_Instructions.html` for the illustrated setup/capture guide, then run `G-REDscript-Profiler\\G-REDscript-Profiler.exe`.
+Extract the ZIP to a normal writable folder. Open `Install_Instructions.html` for the illustrated setup/capture guide, then run `G-REDscript-Profiler\G-REDscript-Profiler.exe`.
 
 The root EXE is a small native launcher. The self-contained WinForms application and .NET runtime live under `app\`, matching the G-CET Runtime Profiler package layout. Settings remain package-local beside the root launcher rather than in Windows roaming/app-data folders.
 

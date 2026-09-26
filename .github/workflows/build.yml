@@ -485,10 +485,16 @@ jobs:
           }
           $guide = Get-Content -LiteralPath 'Install_Instructions.html' -Raw
           if ($guide -match '@@IMG_[A-Z]+@@') {
-            throw 'Generated install guide still contains unresolved image placeholders.'
+            throw 'Generated install guide still contains legacy image placeholders.'
           }
-          if ($guide -notmatch 'G-REDscript Profiler' -or $guide -notmatch 'Live Captures') {
-            throw 'Generated install guide failed content validation.'
+          if ($guide -match 'data:image/webp;base64') {
+            throw 'Generated install guide still contains legacy compressed WebP screenshots.'
+          }
+          if ($guide -notmatch 'G-REDscript Profiler' -or
+              $guide -notmatch 'hardcoded F11' -or
+              $guide -notmatch 'data:image/png;base64' -or
+              $guide -notmatch 'Live Captures') {
+            throw 'Generated install guide failed final GRSP content validation.'
           }
 
       - name: Stage portable release ZIP

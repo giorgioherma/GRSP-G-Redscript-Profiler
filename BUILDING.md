@@ -67,7 +67,7 @@ The release ZIP itself is hashed separately and its SHA-256 is published beside 
 
 ## Install guide
 
-`tools/Build-InstallInstructions.ps1` generates the self-contained `Install_Instructions.html` from the checked-in template and image payloads. The generated HTML is placed beside the profiler folder at the root of the release ZIP.
+`Install_Instructions.template.html` is the canonical self-contained install guide, including the full-resolution PNG screenshots. `tools/Build-InstallInstructions.ps1` copies and validates that guide as `Install_Instructions.html`, which is placed beside the profiler folder at the root of the release ZIP.
 
 ## Canonical release
 

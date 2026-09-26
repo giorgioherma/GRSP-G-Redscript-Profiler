@@ -528,7 +528,7 @@ internal sealed class MainForm : Form
                 "RED4ext: Not installed ❌\r\n" +
                 "REDscript Profiler: unavailable ❌\r\n" +
                 "G-REDscript PROFILER IS NOT INSTALLED. ❌\r\n" +
-                "Live Files: -";
+                "Live Captures: -";
             ColorizeStatusText();
             RenderSetupGameStatus();
             RenderManagedFiles(null);
@@ -672,7 +672,7 @@ internal sealed class MainForm : Form
             frameLine + "\r\n" +
             syncLines + "\r\n\r\n" +
             $"G-REDscript PROFILER IS {installState}\r\n" +
-            $"Live Files: {snapshot.CompletedCaptureCount}";
+            $"Live Captures: {snapshot.CompletedCaptureCount}";
 
         ColorizeStatusText();
         SetActionState(snapshot);

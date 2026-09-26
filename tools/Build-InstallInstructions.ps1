@@ -13,7 +13,6 @@ $images = [ordered]@{
     '@@IMG_READY@@' = 'docs\\install-guide\\ready.webp.b64'
     '@@IMG_CAPTURED@@' = 'docs\\install-guide\\captured.webp.b64'
     '@@IMG_COLLECTED@@' = 'docs\\install-guide\\collected.webp.b64'
-    '@@IMG_RESTORED@@' = 'docs\\install-guide\\restored.webp.b64'
 }
 
 foreach ($entry in $images.GetEnumerator()) {

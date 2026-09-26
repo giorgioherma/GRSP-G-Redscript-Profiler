@@ -15,7 +15,9 @@ First stable release of the standalone G-REDscript Profiler.
 - Unified profiler readiness/status UI using the G-CET v1.0.0 dark/cyan/magenta shell.
 - White status prose with colored semantic markers; disabled actions gray, enabled forward actions cyan, restore magenta.
 - Dark themed dialogs retaining the normal Windows warning/information/error icons.
-- Small native root launcher with the self-contained manager/runtime isolated under `app\`.
+- Small native root launcher with standard Windows VERSIONINFO and the self-contained manager/runtime isolated under `app\`.
+- Native profiler DLL built directly from the public Rust source by GitHub Actions.
+- Exact generated `Cargo.lock` plus `BUILD_PROVENANCE.txt` shipped with the release.
 - Package-local settings and results.
 - Headless interface for the exact same standalone package consumed by TOTAL Profiler.
 
@@ -37,6 +39,10 @@ G-REDscript-Profiler-v1.0.0.zip
    ├─ RESULTS\
    └─ docs\
       ├─ README.md
+      ├─ BUILDING.md
+      ├─ SECURITY.md
+      ├─ BUILD_PROVENANCE.txt
+      ├─ Cargo.lock
       ├─ CHANGELOG.md
       ├─ RELEASE_NOTES.md
       ├─ FRAMEWORK_AUTHOR_GUIDE.md

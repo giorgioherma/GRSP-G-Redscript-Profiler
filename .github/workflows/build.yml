@@ -526,11 +526,13 @@ jobs:
           Write-Host "Portable release: $asset"
           Write-Host "SHA256: $hash"
 
-      - name: Upload portable Windows artifact
+      - name: Upload canonical Windows artifact
         uses: actions/upload-artifact@v4
         with:
           name: G-REDscript-Profiler-v${{ steps.product_version.outputs.version }}
-          path: portable/
+          path: |
+            G-REDscript-Profiler-v${{ steps.product_version.outputs.version }}.zip
+            G-REDscript-Profiler-v${{ steps.product_version.outputs.version }}.zip.sha256.txt
           if-no-files-found: error
 
       - name: Publish canonical GitHub release

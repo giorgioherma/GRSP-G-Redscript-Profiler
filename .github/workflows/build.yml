@@ -72,8 +72,22 @@ jobs:
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
 
+      - name: Resolve Rust dependency lock
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          cargo generate-lockfile
+          if (!(Test-Path -LiteralPath 'Cargo.lock' -PathType Leaf)) {
+            throw 'Cargo.lock was not generated.'
+          }
+          $lockHash = (Get-FileHash -LiteralPath 'Cargo.lock' -Algorithm SHA256).Hash.ToLowerInvariant()
+          "CARGO_LOCK_SHA256=$lockHash" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+          Write-Host "Cargo.lock SHA256: $lockHash"
+          cargo --version
+          rustc --version
+
       - name: Build release DLL
-        run: cargo build --release
+        run: cargo build --release --locked
 
       - name: Verify stable binaries
         shell: pwsh
@@ -94,6 +108,10 @@ jobs:
           if ([string]::IsNullOrWhiteSpace($managerVersion) -or !$managerVersion.StartsWith($env:PRODUCT_VERSION, [StringComparison]::OrdinalIgnoreCase)) {
             throw "Manager ProductVersion mismatch: expected prefix $env:PRODUCT_VERSION, got $managerVersion"
           }
+
+          $nativeHash = (Get-FileHash -LiteralPath target\release\g_redscript_profiler.dll -Algorithm SHA256).Hash.ToLowerInvariant()
+          "NATIVE_DLL_SHA256=$nativeHash" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+          Write-Host "Native profiler DLL SHA256: $nativeHash"
 
       - name: Build native root launcher
         shell: pwsh
@@ -179,12 +197,30 @@ jobs:
           Copy-Item CaptureTitle.txt publish\payload\CaptureTitle.txt
 
           Copy-Item README.md publish\docs\README.md
+          Copy-Item BUILDING.md publish\docs\BUILDING.md
+          Copy-Item SECURITY.md publish\docs\SECURITY.md
           Copy-Item CHANGELOG.md publish\docs\CHANGELOG.md
           Copy-Item PUBLIC_RELEASE_NOTES.md publish\docs\RELEASE_NOTES.md
           Copy-Item FRAMEWORK_AUTHOR_GUIDE.md publish\docs\FRAMEWORK_AUTHOR_GUIDE.md
           Copy-Item OUTPUT_SCHEMA.md publish\docs\OUTPUT_SCHEMA.md
           Copy-Item docs\TOTAL_INTEGRATION_CONTRACT.md publish\docs\TOTAL_INTEGRATION_CONTRACT.md
           Copy-Item THIRD_PARTY_NOTICE.txt publish\docs\THIRD_PARTY_NOTICE.txt
+          Copy-Item Cargo.lock publish\docs\Cargo.lock
+
+          $rustcVersion = (& rustc --version).Trim()
+          $cargoVersion = (& cargo --version).Trim()
+          @"
+          G-REDscript Profiler build provenance
+          Product version: $env:PRODUCT_VERSION
+          Source commit: $env:GITHUB_SHA
+          Native profiler: G-REDscript-Profiler.dll
+          Native profiler SHA256: $env:NATIVE_DLL_SHA256
+          Cargo.lock SHA256: $env:CARGO_LOCK_SHA256
+          red4ext-rs revision: c44146c
+          Rust compiler: $rustcVersion
+          Cargo: $cargoVersion
+          Build workflow: .github/workflows/build.yml
+          "@ | Set-Content -LiteralPath publish\docs\BUILD_PROVENANCE.txt -Encoding utf8
 
           @'
           G-REDscript Profiler stores collected captures in this folder.
@@ -226,6 +262,10 @@ jobs:
             'publish\payload\G-REDscript-Profiler.dll',
             'publish\payload\CaptureTitle.txt',
             'publish\docs\README.md',
+            'publish\docs\BUILDING.md',
+            'publish\docs\SECURITY.md',
+            'publish\docs\BUILD_PROVENANCE.txt',
+            'publish\docs\Cargo.lock',
             'publish\docs\CHANGELOG.md',
             'publish\docs\RELEASE_NOTES.md',
             'publish\RESULTS\README.txt'
@@ -243,9 +283,20 @@ jobs:
             throw 'Public PDBs leaked into the portable package.'
           }
 
-          $launcherLength = (Get-Item publish\G-REDscript-Profiler.exe).Length
+          $launcherItem = Get-Item publish\G-REDscript-Profiler.exe
+          $launcherLength = $launcherItem.Length
           if ($launcherLength -gt 2MB) {
             throw "Root launcher is unexpectedly large: $launcherLength bytes"
+          }
+          $launcherInfo = $launcherItem.VersionInfo
+          if ($launcherInfo.ProductName -ne 'G-REDscript Profiler') {
+            throw "Launcher ProductName mismatch: $($launcherInfo.ProductName)"
+          }
+          if ($launcherInfo.OriginalFilename -ne 'G-REDscript-Profiler.exe') {
+            throw "Launcher OriginalFilename mismatch: $($launcherInfo.OriginalFilename)"
+          }
+          if ([string]::IsNullOrWhiteSpace($launcherInfo.ProductVersion) -or !$launcherInfo.ProductVersion.StartsWith($env:PRODUCT_VERSION, [StringComparison]::OrdinalIgnoreCase)) {
+            throw "Launcher ProductVersion mismatch: expected prefix $env:PRODUCT_VERSION, got $($launcherInfo.ProductVersion)"
           }
 
           $publishedVersion = (Get-Content publish\VERSION.txt -Raw).Trim()
@@ -524,6 +575,8 @@ jobs:
           $notes = (Get-Content -LiteralPath PUBLIC_RELEASE_NOTES.md -Raw).TrimEnd()
           $notes += [Environment]::NewLine + [Environment]::NewLine + '## Canonical release SHA-256' + [Environment]::NewLine + [Environment]::NewLine
           $notes += $env:PUBLIC_SHA256 + '  ' + $env:PUBLIC_ASSET + [Environment]::NewLine
+          $notes += [Environment]::NewLine + '## Native profiler DLL SHA-256' + [Environment]::NewLine + [Environment]::NewLine
+          $notes += $env:NATIVE_DLL_SHA256 + '  G-REDscript-Profiler.dll' + [Environment]::NewLine
           Set-Content -LiteralPath $releaseNotes -Value $notes -Encoding utf8
 
           $releaseExists = $false

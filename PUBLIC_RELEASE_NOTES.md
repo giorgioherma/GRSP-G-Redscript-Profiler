@@ -4,7 +4,7 @@ First stable release of the standalone G-REDscript Profiler.
 
 ## Highlights
 
-- Portable, self-contained Windows ZIP — extract and run.
+- Portable, self-contained Windows ZIP — extract and run.\n- Illustrated `Install_Instructions.html` shipped beside the profiler folder.
 - Native REDscript profiling through the released `G-REDscript-Profiler.dll`.
 - F11 START / F11 STOP + export.
 - Capture titles and structured result archives.
@@ -23,6 +23,7 @@ First stable release of the standalone G-REDscript Profiler.
 
 ```text
 G-REDscript-Profiler-v1.0.0.zip
+├─ Install_Instructions.html
 └─ G-REDscript-Profiler\
    ├─ G-REDscript-Profiler.exe
    ├─ MANIFEST.json
@@ -44,4 +45,4 @@ G-REDscript-Profiler-v1.0.0.zip
       └─ THIRD_PARTY_NOTICE.txt
 ```
 
-Extract to a writable folder and run `G-REDscript-Profiler.exe`.
+Extract to a writable folder, open `Install_Instructions.html` if you want the illustrated guide, then run `G-REDscript-Profiler\\G-REDscript-Profiler.exe`.
